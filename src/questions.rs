@@ -1,15 +1,5 @@
 use crate::*;
 
-trait AccountIdExt {
-    fn is_zero(&self) -> bool;
-}
-
-impl AccountIdExt for AccountId {
-    fn is_zero(&self) -> bool {
-        self.as_bytes().iter().all(|b| *b == 0)
-    }
-}
-
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct StudentAccount {
@@ -72,7 +62,7 @@ pub struct QuestionNIT {
 }
 
 pub trait QuestionNITExt {
-    fn questionsNIT(&self) -> QuestionNIT;
+    fn questions_NIT(&self) -> QuestionNIT;
 
     fn get_question_friday_class(&self) -> String;
     fn get_question_monday_class(&self) -> String;
@@ -97,7 +87,7 @@ pub trait QuestionNITExt {
 #[near_bindgen]
 impl QuestionNITExt for Contract {
 
-    fn questionsNIT(&self) -> QuestionNIT {
+    fn questions_NIT(&self) -> QuestionNIT {
         self.question_nit.get().unwrap()
     }
 
