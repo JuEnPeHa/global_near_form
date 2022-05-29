@@ -7,6 +7,9 @@ use near_sdk::{ promise_result_as_success,
     Gas, PanicOnDefault, Promise, CryptoHash, BorshStorageKey, require,
 };
 
+
+const STORAGE_PER_FORM: u128 = 100 * env::STORAGE_PRICE_PER_BYTE;
+
 trait AccountIdExt {
     fn is_zero(&self) -> bool;
 }
