@@ -62,7 +62,20 @@ pub struct QuestionNIT {
 }
 
 pub trait QuestionNITExt {
-    fn questions_NIT(&self) -> QuestionNIT;
+    fn questions_nit(&self) -> QuestionNIT;
+
+    fn set_friday_professor(&mut self, professor: AccountId);
+    fn delete_friday_professor(&mut self, professor: AccountId);
+    fn set_monday_professor(&mut self, professor: AccountId);
+    fn delete_monday_professor(&mut self, professor: AccountId);
+    fn set_tuesday_professor(&mut self, professor: AccountId);
+    fn delete_tuesday_professor(&mut self, professor: AccountId);
+    fn set_wednesday_professor(&mut self, professor: AccountId);
+    fn delete_wednesday_professor(&mut self, professor: AccountId);
+    fn set_thursday_professor(&mut self, professor: AccountId);
+    fn delete_thursday_professor(&mut self, professor: AccountId);
+    fn set_nit_main_professor(&mut self, professor: AccountId);
+    fn delete_nit_main_professor(&mut self, professor: AccountId);
 
     fn get_question_friday_class(&self) -> String;
     fn get_question_monday_class(&self) -> String;
@@ -87,8 +100,98 @@ pub trait QuestionNITExt {
 #[near_bindgen]
 impl QuestionNITExt for Contract {
 
-    fn questions_NIT(&self) -> QuestionNIT {
+    fn questions_nit(&self) -> QuestionNIT {
         self.question_nit.get().unwrap()
+    }
+
+    fn get_friday_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().friday_professor
+    }
+    fn set_friday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.friday_professor.retain(|x| x != &professor);
+        question_nit.friday_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_friday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.friday_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
+    }
+
+    fn get_monday_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().monday_professor
+    }
+    fn set_monday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.monday_professor.retain(|x| x != &professor);
+        question_nit.monday_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_monday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.monday_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
+    }
+
+    fn get_tuesday_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().tuesday_professor
+    }
+    fn set_tuesday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.tuesday_professor.retain(|x| x != &professor);
+        question_nit.tuesday_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_tuesday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.tuesday_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
+    }
+
+    fn get_wednesday_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().wednesday_professor
+    }
+    fn set_wednesday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.wednesday_professor.retain(|x| x != &professor);
+        question_nit.wednesday_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_wednesday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.wednesday_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
+    }
+
+    fn get_thursday_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().thursday_professor
+    }
+    fn set_thursday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.thursday_professor.retain(|x| x != &professor);
+        question_nit.thursday_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_thursday_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.thursday_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
+    }
+
+    fn get_nit_main_professor(&self) -> Vec<AccountId> {
+        self.question_nit.get().unwrap().nit_main_professor
+    }
+    fn set_nit_main_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.nit_main_professor.retain(|x| x != &professor);
+        question_nit.nit_main_professor.push(professor);
+        self.question_nit.set(&question_nit);
+    }
+    fn delete_nit_main_professor(&mut self, professor: AccountId) {
+        let mut question_nit = self.questions_nit();
+        question_nit.nit_main_professor.retain(|x| x != &professor);
+        self.question_nit.set(&question_nit);
     }
 
     fn get_question_friday_class(&self) -> String {
@@ -109,24 +212,7 @@ impl QuestionNITExt for Contract {
     fn get_question_nit_main_class(&self) -> String {
         self.question_nit.get().unwrap().question_nit_main_class
     }
-    fn get_friday_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().friday_professor
-    }
-    fn get_monday_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().monday_professor
-    }
-    fn get_tuesday_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().tuesday_professor
-    }
-    fn get_wednesday_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().wednesday_professor
-    }
-    fn get_thursday_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().thursday_professor
-    }
-    fn get_nit_main_professor(&self) -> Vec<AccountId> {
-        self.question_nit.get().unwrap().nit_main_professor
-    }
+
     fn get_comment_friday_class(&self) -> String {
         self.question_nit.get().unwrap().comment_friday_class
     }
