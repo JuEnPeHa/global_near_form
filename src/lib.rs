@@ -4,15 +4,18 @@ use near_sdk::json_types::{U128, U64};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{ promise_result_as_success,
     assert_one_yocto, env, ext_contract, near_bindgen, AccountId, Balance,
-    Gas, PanicOnDefault, Promise, CryptoHash, BorshStorageKey, require,
+    Gas, PanicOnDefault, Promise, CryptoHash, BorshStorageKey, require, PublicKey,
 };
 
 pub use crate::questions::*;
+pub use crate::internal_functions::*;
 mod questions;
+mod insert_functions;
+mod internal_functions;
 
 const STORAGE_PER_FORM: u128 = 100 * env::STORAGE_PRICE_PER_BYTE;
 const DELIMITER_NIT: &str = ":NIT:";
-const DELIMITER_NBD: &str = ":NBD:";
+const _DELIMITER_NBD: &str = ":NBD:";
 
 pub type FormId = String;
 
@@ -35,7 +38,9 @@ pub enum StorageKey {
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     pub owner_id: AccountId,
+    //pub self_contract_id: AccountId,
     pub question_nit: LazyOption<QuestionNIT>,
+    pub question_nbd: LazyOption</*QuestionNBD*/ QuestionNIT >,
     pub by_account_id: LookupMap<AccountId, StudentAccount>,
     pub accounts_already_answered_nit: UnorderedSet<AccountId>,
     pub storage_deposits: UnorderedMap<AccountId, Balance>,
@@ -43,16 +48,16 @@ pub struct Contract {
     pub answer_nit: UnorderedMap<FormId, AnswerNIT>,
     pub answer_nbd: UnorderedMap<FormId, /*AnswerNBD*/ AnswerNIT>,
 
-    pub by_course_type: LookupMap<CourseType, UnorderedSet<FormId>>,
+    pub by_course_type: LookupMap<u8, UnorderedSet<FormId>>,
 
     pub by_teacher_id: LookupMap<AccountId, UnorderedSet<FormId>>,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Eq, Debug, Clone)]
-pub enum CourseType {
-    NIT,
-    NBD,
-}
+// #[derive(BorshSerialize, BorshDeserialize, PartialEq, Eq, Debug, Clone)]
+// pub enum CourseType {
+//     NIT,
+//     NBD,
+// }
 
 #[near_bindgen]
 impl Contract {
@@ -89,9 +94,14 @@ impl Contract {
         require!(!env::state_exists(), "Contract already initialized");
         let this = Self {
             owner_id,
+            //self_contract_id: env::current_account_id(),
             question_nit: LazyOption::new(
                 StorageKey::QuestionNIT.try_to_vec().unwrap(),
                 Some(&question_nit),
+            ),
+            question_nbd: LazyOption::new(
+                StorageKey::QuestionNBD.try_to_vec().unwrap(),
+                None,
             ),
             by_account_id: LookupMap::new(StorageKey::ByAccountId.try_to_vec().unwrap()),
             accounts_already_answered_nit: UnorderedSet::new(StorageKey::AnswerNIT.try_to_vec().unwrap()),

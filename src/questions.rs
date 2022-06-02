@@ -4,8 +4,10 @@ use crate::*;
 #[serde(crate = "near_sdk::serde")]
 pub struct StudentAccount {
     pub balance: Balance,
-    pub nonce: U64,
-    pub creation_height: U64,
+    pub locked_balance: Balance,
+    pub nonce: u64,
+    pub public_key: PublicKey,
+    pub used_gas: Gas,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
