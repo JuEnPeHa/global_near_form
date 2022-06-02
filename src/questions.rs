@@ -8,12 +8,17 @@ pub struct StudentAccount {
     pub nonce: u64,
     pub public_key: PublicKey,
     pub used_gas: Gas,
+    pub form_id_nit: FormId,
+    pub form_id_nbd: FormId,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct AnswerNIT {
     //pub nonce: U64,
+    pub student: AccountId,
+    pub form_id: FormId,
+
     pub answer_friday_class: u8,
     pub friday_professor: AccountId,
     pub comment_friday_class: String,

@@ -2,16 +2,15 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, LazyOption, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{U128, U64};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::{ promise_result_as_success,
-    assert_one_yocto, env, ext_contract, near_bindgen, AccountId, Balance,
+use near_sdk::{ assert_one_yocto, env, near_bindgen, AccountId, Balance,
     Gas, PanicOnDefault, Promise, CryptoHash, BorshStorageKey, require, PublicKey,
 };
 
 pub use crate::questions::*;
-pub use crate::internal_functions::*;
+pub use crate::view_functions::*;
 mod questions;
 mod insert_functions;
-mod internal_functions;
+mod view_functions;
 
 const STORAGE_PER_FORM: u128 = 100 * env::STORAGE_PRICE_PER_BYTE;
 const DELIMITER_NIT: &str = ":NIT:";
@@ -21,8 +20,10 @@ pub type FormId = String;
 
 #[derive(BorshStorageKey, BorshSerialize)]
 pub enum StorageKey {
-    AnswerNIT,
-    AnswerNBD,
+    AnswerNITStorageKeySet,
+    AnswerNBDStorageKeySet,
+    AnswerNITStorageKeyMap,
+    AnswerNBDStorageKeyMap,
     StorageDeposits,
     QuestionNIT,
     QuestionNBD,
@@ -43,6 +44,7 @@ pub struct Contract {
     pub question_nbd: LazyOption</*QuestionNBD*/ QuestionNIT >,
     pub by_account_id: LookupMap<AccountId, StudentAccount>,
     pub accounts_already_answered_nit: UnorderedSet<AccountId>,
+    pub accounts_already_answered_nbd: UnorderedSet<AccountId>,
     pub storage_deposits: UnorderedMap<AccountId, Balance>,
 
     pub answer_nit: UnorderedMap<FormId, AnswerNIT>,
@@ -52,12 +54,6 @@ pub struct Contract {
 
     pub by_teacher_id: LookupMap<AccountId, UnorderedSet<FormId>>,
 }
-
-// #[derive(BorshSerialize, BorshDeserialize, PartialEq, Eq, Debug, Clone)]
-// pub enum CourseType {
-//     NIT,
-//     NBD,
-// }
 
 #[near_bindgen]
 impl Contract {
@@ -101,14 +97,15 @@ impl Contract {
             ),
             question_nbd: LazyOption::new(
                 StorageKey::QuestionNBD.try_to_vec().unwrap(),
-                None,
+                Some(/*&question_nbd*/ &question_nit),
             ),
             by_account_id: LookupMap::new(StorageKey::ByAccountId.try_to_vec().unwrap()),
-            accounts_already_answered_nit: UnorderedSet::new(StorageKey::AnswerNIT.try_to_vec().unwrap()),
+            accounts_already_answered_nit: UnorderedSet::new(StorageKey::AnswerNITStorageKeySet.try_to_vec().unwrap()),
+            accounts_already_answered_nbd: UnorderedSet::new(StorageKey::AnswerNBDStorageKeySet.try_to_vec().unwrap()),
             storage_deposits: UnorderedMap::new(StorageKey::StorageDeposits.try_to_vec().unwrap()),
 
-            answer_nit: UnorderedMap::new(StorageKey::AnswerNIT.try_to_vec().unwrap()),
-            answer_nbd: UnorderedMap::new(StorageKey::AnswerNBD.try_to_vec().unwrap()),
+            answer_nit: UnorderedMap::new(StorageKey::AnswerNITStorageKeyMap.try_to_vec().unwrap()),
+            answer_nbd: UnorderedMap::new(StorageKey::AnswerNBDStorageKeyMap.try_to_vec().unwrap()),
 
             by_course_type: LookupMap::new(StorageKey::ByCourseType.try_to_vec().unwrap()),
 
