@@ -1,5 +1,10 @@
 use crate::*;
 
+pub(crate) fn assert_signer_is_owner(owner_id: AccountId) {
+    let signer = env::signer_account_id();
+    assert_eq!(signer, owner_id, "Only the owner can call this function");
+}
+
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct StudentAccount {
@@ -85,11 +90,17 @@ pub trait QuestionNITExt {
     fn delete_nit_main_professor(&mut self, professor: AccountId);
 
     fn get_question_friday_class(&self) -> String;
+    fn change_question_friday_class(&mut self, question: String);
     fn get_question_monday_class(&self) -> String;
+    fn change_question_monday_class(&mut self, question: String);
     fn get_question_tuesday_class(&self) -> String;
+    fn change_question_tuesday_class(&mut self, question: String);
     fn get_question_wednesday_class(&self) -> String;
+    fn change_question_wednesday_class(&mut self, question: String);
     fn get_question_thursday_class(&self) -> String;
+    fn change_question_thursday_class(&mut self, question: String);
     fn get_question_nit_main_class(&self) -> String;
+    fn change_question_nit_main_class(&mut self, question: String);
     fn get_friday_professor(&self) -> Vec<AccountId>;
     fn get_monday_professor(&self) -> Vec<AccountId>;
     fn get_tuesday_professor(&self) -> Vec<AccountId>;
@@ -97,16 +108,21 @@ pub trait QuestionNITExt {
     fn get_thursday_professor(&self) -> Vec<AccountId>;
     fn get_nit_main_professor(&self) -> Vec<AccountId>;
     fn get_comment_friday_class(&self) -> String;
+    fn change_comment_friday_class(&mut self, comment: String);
     fn get_comment_monday_class(&self) -> String;
+    fn change_comment_monday_class(&mut self, comment: String);
     fn get_comment_tuesday_class(&self) -> String;
+    fn change_comment_tuesday_class(&mut self, comment: String);
     fn get_comment_wednesday_class(&self) -> String;
+    fn change_comment_wednesday_class(&mut self, comment: String);
     fn get_comment_thursday_class(&self) -> String;
+    fn change_comment_thursday_class(&mut self, comment: String);
     fn get_comment_main_class(&self) -> String;
+    fn change_comment_main_class(&mut self, comment: String);
 }
 
 #[near_bindgen]
 impl QuestionNITExt for Contract {
-
     fn questions_nit(&self) -> QuestionNIT {
         self.question_nit.get().unwrap()
     }
@@ -115,12 +131,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().friday_professor
     }
     fn set_friday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.friday_professor.retain(|x| x != &professor);
         question_nit.friday_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_friday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.friday_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -130,12 +148,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().monday_professor
     }
     fn set_monday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.monday_professor.retain(|x| x != &professor);
         question_nit.monday_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_monday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.monday_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -145,12 +165,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().tuesday_professor
     }
     fn set_tuesday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.tuesday_professor.retain(|x| x != &professor);
         question_nit.tuesday_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_tuesday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.tuesday_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -160,12 +182,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().wednesday_professor
     }
     fn set_wednesday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.wednesday_professor.retain(|x| x != &professor);
         question_nit.wednesday_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_wednesday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.wednesday_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -175,12 +199,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().thursday_professor
     }
     fn set_thursday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.thursday_professor.retain(|x| x != &professor);
         question_nit.thursday_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_thursday_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.thursday_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -190,12 +216,14 @@ impl QuestionNITExt for Contract {
         self.question_nit.get().unwrap().nit_main_professor
     }
     fn set_nit_main_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.nit_main_professor.retain(|x| x != &professor);
         question_nit.nit_main_professor.push(professor);
         self.question_nit.set(&question_nit);
     }
     fn delete_nit_main_professor(&mut self, professor: AccountId) {
+        assert_signer_is_owner(self.owner_id.clone());
         let mut question_nit = self.questions_nit();
         question_nit.nit_main_professor.retain(|x| x != &professor);
         self.question_nit.set(&question_nit);
@@ -237,5 +265,79 @@ impl QuestionNITExt for Contract {
     }
     fn get_comment_main_class(&self) -> String {
         self.question_nit.get().unwrap().comment_main_class
+    }
+
+    fn change_question_friday_class(&mut self, question_friday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_friday_class = question_friday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_question_monday_class(&mut self, question_monday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_monday_class = question_monday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_question_tuesday_class(&mut self, question_tuesday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_tuesday_class = question_tuesday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_question_wednesday_class(&mut self, question_wednesday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_wednesday_class = question_wednesday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_question_thursday_class(&mut self, question_thursday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_thursday_class = question_thursday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_question_nit_main_class(&mut self, question_nit_main_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.question_nit_main_class = question_nit_main_class;
+        self.question_nit.set(&question_nit);
+    }
+
+    fn change_comment_friday_class(&mut self, comment_friday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_friday_class = comment_friday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_comment_monday_class(&mut self, comment_monday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_monday_class = comment_monday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_comment_tuesday_class(&mut self, comment_tuesday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_tuesday_class = comment_tuesday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_comment_wednesday_class(&mut self, comment_wednesday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_wednesday_class = comment_wednesday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_comment_thursday_class(&mut self, comment_thursday_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_thursday_class = comment_thursday_class;
+        self.question_nit.set(&question_nit);
+    }
+    fn change_comment_main_class(&mut self, comment_main_class: String) {
+        assert_signer_is_owner(self.owner_id.clone());
+        let mut question_nit = self.questions_nit();
+        question_nit.comment_main_class = comment_main_class;
+        self.question_nit.set(&question_nit);
     }
 }

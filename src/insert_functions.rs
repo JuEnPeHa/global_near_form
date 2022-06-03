@@ -1,35 +1,39 @@
 use crate::*;
 
-pub (crate) fn hash_course_type(course_type: &u8) -> CryptoHash {
+pub(crate) fn hash_course_type(course_type: &u8) -> CryptoHash {
     let mut hash = CryptoHash::default();
     hash.copy_from_slice(&env::sha256(course_type.to_string().as_bytes()));
     hash
 }
 
-pub (crate) fn hash_teacher_id(teacher_id: &AccountId) -> CryptoHash {
+pub(crate) fn hash_teacher_id(teacher_id: &AccountId) -> CryptoHash {
     let mut hash = CryptoHash::default();
     hash.copy_from_slice(&env::sha256(teacher_id.as_bytes()));
     hash
 }
 
-pub (crate) fn get_type_of_course<T>(course: &T) -> u8 {
-    match type_of_course(&course) {
-        AnswerNIT => 0,
-        //AnswerNBD => 1,
-        _ => env::panic_str("Unknown course type"),
-    }
-}
+// pub(crate) fn get_type_of_course<String>(course: String) -> u8 {
+//     let answer_nit = "&global_near_form::questions::AnswerNIT".to_string();
+//     let answer_nbd = "&global_near_form::questions::AnswerNBD".to_string();
+//     match type_of_course(&course) {
+//         answer_nit => 0,
+//         answer_nbd => 1,
+//         _ => env::panic_str("Unknown course type"),
+//     }
+// }
 
-pub (crate) fn type_of_course<T>(_: &T) -> String {
-    std::any::type_name::<T>().to_string()
-}
+// pub(crate) fn type_of_course<T>(_: &T) -> String {
+//     let tipo = std::any::type_name::<T>().to_string();
+//     env::log_str(&tipo);
+//     tipo
+// }
 
 pub trait AnsweringNIT {
     fn answer_nit(
-        &mut self, 
-        answer_rating: String, 
-        fr_p: AccountId, 
-        mo_p: AccountId, 
+        &mut self,
+        answer_rating: String,
+        fr_p: AccountId,
+        mo_p: AccountId,
         tu_p: AccountId,
         we_p: AccountId,
         th_p: AccountId,
@@ -47,10 +51,10 @@ pub trait AnsweringNIT {
 impl AnsweringNIT for Contract {
     #[payable]
     fn answer_nit(
-        &mut self, 
-        answer_rating: String, 
-        fr_p: AccountId, 
-        mo_p: AccountId, 
+        &mut self,
+        answer_rating: String,
+        fr_p: AccountId,
+        mo_p: AccountId,
         tu_p: AccountId,
         we_p: AccountId,
         th_p: AccountId,
@@ -72,7 +76,10 @@ impl AnsweringNIT for Contract {
         let form_id_cloned = form_id.clone();
 
         let ratings_str: Vec<&str> = answer_rating.split(" ").collect();
-        let ratings_num: Vec<u8> = ratings_str.iter().map(|x| x.parse::<u8>().unwrap()).collect();
+        let ratings_num: Vec<u8> = ratings_str
+            .iter()
+            .map(|x| x.parse::<u8>().unwrap())
+            .collect();
 
         let answer: AnswerNIT = AnswerNIT {
             student,
@@ -97,15 +104,19 @@ impl AnsweringNIT for Contract {
             comment_main_class: com_nit,
         };
 
-        let type_course: u8 = get_type_of_course(&answer);
-        env::log_str(type_course.to_string().as_str());
+        let type_course: u8 = 0; // 0 = NIT
+        //env::log_str(type_course.to_string().as_str());
 
-        assert_one_yocto();
-        assert!(!self.accounts_already_answered_nit.contains(&student_name), "You have already answered this form");
+        //assert_one_yocto();
+        assert!(
+            !self.accounts_already_answered_nit.contains(&student_name),
+            "You have already answered this form"
+        );
         self.accounts_already_answered_nit.insert(&student_name);
 
         self.answer_nit.insert(&form_id, &answer);
-        self.storage_deposits.insert(&student_name, &STORAGE_PER_FORM);
+        self.storage_deposits
+            .insert(&student_name, &STORAGE_PER_FORM);
         Promise::new(env::current_account_id()).transfer(Balance::from(STORAGE_PER_FORM.clone()));
 
         let by_account_id = self.by_account_id.get(&student_name);
@@ -116,15 +127,18 @@ impl AnsweringNIT for Contract {
             self.by_account_id.insert(&student_name, &by_account_id);
             //by_account_id
         } else {
-            self.by_account_id.insert(&student_name, &StudentAccount {
-                balance: env::account_balance(),
-                locked_balance: env::account_locked_balance(),
-                nonce: env::block_height(),
-                public_key: env::signer_account_pk(),
-                used_gas: env::used_gas(),
-                form_id_nit: form_id.clone(),
-                form_id_nbd: "".to_string(),
-            });
+            self.by_account_id.insert(
+                &student_name,
+                &StudentAccount {
+                    balance: env::account_balance(),
+                    locked_balance: env::account_locked_balance(),
+                    nonce: env::block_height(),
+                    public_key: env::signer_account_pk(),
+                    used_gas: env::used_gas(),
+                    form_id_nit: form_id.clone(),
+                    form_id_nbd: "".to_string(),
+                },
+            );
             //bydfds
         };
 
