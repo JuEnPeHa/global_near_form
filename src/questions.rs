@@ -2,7 +2,9 @@ use crate::*;
 
 pub(crate) fn assert_signer_is_owner(owner_id: AccountId) {
     let signer = env::signer_account_id();
-    assert_eq!(signer, owner_id, "Only the owner can call this function");
+    if signer != owner_id {
+        env::panic_str("Only the owner can call this function");
+    }
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]

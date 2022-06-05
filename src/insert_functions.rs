@@ -105,13 +105,17 @@ impl AnsweringNIT for Contract {
         };
 
         let type_course: u8 = 0; // 0 = NIT
-        //env::log_str(type_course.to_string().as_str());
+                                 //env::log_str(type_course.to_string().as_str());
 
         //assert_one_yocto();
-        assert!(
+        require!(
             !self.accounts_already_answered_nit.contains(&student_name),
-            "You have already answered this form"
+            format!("You already answered the NIT form")
         );
+        // assert!(
+        //     !self.accounts_already_answered_nit.contains(&student_name),
+        //     "You have already answered this form"
+        // );
         self.accounts_already_answered_nit.insert(&student_name);
 
         self.answer_nit.insert(&form_id, &answer);
