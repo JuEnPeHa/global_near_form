@@ -8,6 +8,10 @@ impl Contract {
         )
     }
 
+    pub fn get_accounts_already_answered(&self) -> Vec<AccountId> {
+        self.accounts_already_answered_nit.iter().collect()
+    }
+
     pub fn get_number_answers_nit(&self) -> U64 {
         U64(self.accounts_already_answered_nit.len() as u64)
     }
