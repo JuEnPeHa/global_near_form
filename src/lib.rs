@@ -12,6 +12,7 @@ pub use crate::view_functions::*;
 mod insert_functions;
 mod questions;
 mod view_functions;
+mod modifier_functions;
 
 const STORAGE_PER_FORM: u128 = 100 * env::STORAGE_PRICE_PER_BYTE;
 const DELIMITER_NIT: &str = ":NIT:";
