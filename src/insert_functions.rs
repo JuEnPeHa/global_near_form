@@ -121,7 +121,7 @@ impl AnsweringNIT for Contract {
         self.answer_nit.insert(&form_id, &answer);
         self.storage_deposits
             .insert(&student_name, &STORAGE_PER_FORM);
-        Promise::new(env::current_account_id()).transfer(Balance::from(STORAGE_PER_FORM.clone()));
+        //Promise::new(env::current_account_id()).transfer(Balance::from(STORAGE_PER_FORM.clone()));
 
         let by_account_id = self.by_account_id.get(&student_name);
         if let Some(by_account_id) = by_account_id {
